@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MemeSense — Indian Meme Sentiment Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base: #131120;
+      --bg-elevated: rgba(29, 25, 48, 0.88);
+      --bg-card-solid: #1e1a33;
+      --bg-card-inner: rgba(20, 17, 34, 0.72);
+      --border: rgba(139, 92, 246, 0.28);
+      --border-strong: rgba(167, 139, 250, 0.52);
+      --text: #f8fafc;
+      --text-muted: #a7a3c2;
+      --gold: #facc15;
+      --gold-hover: #fde047;
+      --purple: #7c3aed;
+      --purple-bright: #9d5cff;
+      --purple-glow: rgba(124, 58, 237, 0.42);
+      --pos: #4ade80;
+      --pos-bg: rgba(34, 197, 94, 0.16);
+      --pos-border: rgba(74, 222, 128, 0.55);
+      --neg: #fb7185;
+      --neg-bg: rgba(244, 63, 94, 0.16);
+      --neg-border: rgba(251, 113, 133, 0.55);
+      --neu: #cbd5e1;
+      --neu-bg: rgba(148, 163, 184, 0.16);
+      --neu-border: rgba(148, 163, 184, 0.45);
+      --radius: 20px;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      min-height: 100%;
+      background-color: var(--bg-base);
+    }
+
+    body {
+      min-height: 100%;
+      position: relative;
+      isolation: isolate;
+      background: transparent;
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* White rage-comic meme faces wallpaper behind translucent purple overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-image: url("/static/assets/bg_meme_faces.jpg?v=2");
+      background-size: 1180px auto;
+      background-repeat: repeat;
+      background-position: center top;
+      opacity: 0.48;
+      filter: contrast(1.12) brightness(1.05);
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 68% 46% at 50% 18%, rgba(109, 40, 217, 0.36), transparent 72%),
+        radial-gradient(ellipse 55% 42% at 15% 82%, rgba(250, 204, 21, 0.06), transparent 65%),
+        linear-gradient(180deg, rgba(19, 17, 32, 0.32) 0%, rgba(19, 17, 32, 0.18) 55%, rgba(16, 14, 28, 0.45) 100%);
+      pointer-events: none;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ================= NAVBAR ================= */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(19, 17, 32, 0.78);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(139, 92, 246, 0.18);
+    }
+
+    .topbar-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      cursor: pointer;
+      width: fit-content;
+      transition: transform 0.22s var(--ease-out);
+    }
+    .brand:hover { transform: translateY(-1px); }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 2px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(250, 204, 21, 0.35);
+      overflow: hidden;
+      transition: transform 0.25s var(--ease-out), box-shadow 0.25s ease;
+    }
+    .brand:hover .brand-icon {
+      transform: rotate(-6deg) scale(1.06);
+      box-shadow: 0 6px 18px rgba(250, 204, 21, 0.3), 0 0 0 2px var(--gold);
+    }
+    .brand-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+    }
+
+    .brand-wordmark {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+    }
+    .brand-wordmark .meme { color: #ffffff; }
+    .brand-wordmark .sense { color: var(--gold); }
+
+    .nav-tabs {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid rgba(139, 92, 246, 0.16);
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease-out), background 0.2s ease, color 0.2s ease, box-shadow 0.22s ease, border-color 0.2s ease;
+    }
+    .nav-btn:hover {
+      color: #ffffff;
+      background: rgba(139, 92, 246, 0.16);
+      transform: translateY(-1px);
+    }
+    .nav-btn:active { transform: translateY(0) scale(0.97); }
+    .nav-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, #6d28d9, #7c3aed);
+      border-color: rgba(196, 181, 253, 0.35);
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.42);
+    }
+
+    .nav-right {
+      display: flex;
+      justify-content: flex-end;
+      position: relative;
+    }
+
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(34, 29, 58, 0.9);
+      border: 1px solid var(--border);
+      color: #f1f5f9;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease-out), border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .lang-pill:hover {
+      transform: translateY(-1px);
+      border-color: var(--gold);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .lang-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 245px;
+      background: #1b1730;
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 6px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+      z-index: 60;
+      animation: popIn 0.18s var(--ease-out);
+    }
+    .lang-opt {
+      width: 100%;
+      text-align: left;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #e2e8f0;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s ease;
+    }
+    .lang-opt:hover { background: rgba(124, 58, 237, 0.24); }
+    .lang-opt small { color: var(--text-muted); font-weight: 500; }
+
+    /* ================= PAGE SHELL ================= */
+    .stage {
+      position: relative;
+      z-index: 5;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 16px 24px 64px;
+    }
+
+    /* Corner comic stickers */
+    .corner-sticker {
+      position: fixed;
+      z-index: 25;
+      pointer-events: auto;
+      user-select: none;
+      cursor: default;
+      transition: transform 0.28s var(--ease-out), filter 0.28s ease;
+    }
+    .sticker-left {
+      left: 16px;
+      bottom: 18px;
+      transform: rotate(-7deg);
+    }
+    .sticker-left:hover { transform: rotate(-2deg) scale(1.07) translateY(-4px); }
+
+    .sticker-right {
+      right: 16px;
+      bottom: 16px;
+      transform: rotate(6deg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .sticker-right:hover { transform: rotate(1deg) scale(1.07) translateY(-4px); }
+
+    .sticker-card {
+      background: #ffffff;
+      color: #111827;
+      border-radius: 16px;
+      padding: 9px 14px;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 1.05;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55), 0 0 0 3px #ffffff;
+      border: 2px solid #1e1b2e;
+    }
+    .sticker-card .acc { color: #7c3aed; }
+
+    .cool-emoji-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      margin-top: -8px;
+    }
+
+    /* ================= HERO SECTION ================= */
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 26px 20px 34px;
+      min-height: 195px;
+      z-index: 2;
+    }
+
+    .hero-art {
+      position: absolute;
+      bottom: -36px;
+      width: 390px;
+      max-width: 33vw;
+      pointer-events: none;
+      z-index: 1;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.65));
+      mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+      transition: transform 0.45s var(--ease-out);
+    }
+    .hero-art-left { left: -12px; }
+    .hero-art-right { right: -12px; }
+
+    .hero-title-wrap {
+      position: relative;
+      z-index: 5;
+      max-width: 560px;
+    }
+
+    .hero-rays {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: clamp(32px, 4.2vw, 48px);
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.015em;
+      text-shadow: 0 6px 24px rgba(0, 0, 0, 0.7);
+    }
+    .hero-title .gold { color: var(--gold); }
+    .hero-title .violet { color: var(--purple-bright); }
+
+    .hero-sub {
+      margin-top: 10px;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: #e2e8f0;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .underline-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .underline-svg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      width: 100%;
+      height: 10px;
+      pointer-events: none;
+    }
+
+    /* ================= MAIN WORKSPACE GRID ================= */
+    .workspace-grid {
+      position: relative;
+      z-index: 6;
+      display: grid;
+      grid-template-columns: 1fr 1.12fr;
+      gap: 22px;
+      align-items: stretch;
+      transition: all 0.35s var(--ease-out);
+    }
+    .workspace-grid.single-col {
+      grid-template-columns: minmax(320px, 560px);
+      justify-content: center;
+    }
+
+    .glass-card {
+      background: var(--bg-elevated);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(7, 5, 16, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: transform 0.25s var(--ease-out), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .glass-card:hover {
+      border-color: var(--border-strong);
+      box-shadow: 0 24px 56px rgba(7, 5, 16, 0.78), 0 0 28px rgba(124, 58, 237, 0.14);
+    }
+
+    /* Upload Card */
+    .upload-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .dropzone {
+      position: relative;
+      min-height: 295px;
+      border: 2px dashed rgba(139, 92, 246, 0.42);
+      border-radius: 16px;
+      background: rgba(17, 14, 30, 0.56);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 28px 20px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color 0.24s ease, background 0.24s ease, transform 0.24s var(--ease-out), box-shadow 0.24s ease;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--gold);
+      background: rgba(34, 27, 60, 0.72);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(124, 58, 237, 0.22);
+    }
+
+    .upload-graphic {
+      position: relative;
+      width: 82px;
+      height: 76px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+      transition: transform 0.3s var(--ease-out);
+    }
+    .dropzone:hover .upload-graphic { transform: translateY(-4px) scale(1.06); }
+
+    .upload-title {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .upload-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .btn-gold {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 12px 26px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      color: #181424;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(250, 204, 21, 0.36);
+      transition: transform 0.22s var(--ease-out), box-shadow 0.22s ease, filter 0.22s ease;
+    }
+    .btn-gold::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -130%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-22deg);
+      transition: left 0.55s var(--ease-out);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(250, 204, 21, 0.52);
+      filter: brightness(1.05);
+    }
+    .btn-gold:hover::after { left: 165%; }
+    .btn-gold:active { transform: translateY(0) scale(0.97); }
+
+    .upload-formats {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #8b85a8;
+      font-weight: 500;
+    }
+
+    .analyzing-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(19, 17, 32, 0.78);
+      backdrop-filter: blur(6px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 10;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 3px solid rgba(250, 204, 21, 0.25);
+      border-top-color: var(--gold);
+      animation: spin 0.75s linear infinite;
+    }
+
+    /* Result Card */
+    .result-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: fadeSlideIn 0.32s var(--ease-out);
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .btn-subtle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(139, 92, 246, 0.30);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s var(--ease-out), background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .btn-subtle:hover {
+      background: rgba(244, 63, 94, 0.16);
+      border-color: rgba(251, 113, 133, 0.55);
+      color: #ffe4e6;
+      transform: translateY(-1px);
+    }
+    .btn-subtle:active { transform: scale(0.96); }
+
+    .result-main {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .result-img-box {
+      width: 100%;
+      aspect-ratio: 1 / 0.92;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0d0b16;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+    }
+    .result-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .sentiment-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sentiment-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1.5px solid var(--pos-border);
+      background: var(--pos-bg);
+      transition: transform 0.22s var(--ease-out), box-shadow 0.22s ease;
+    }
+    .sentiment-banner:hover { transform: translateY(-1px); }
+    .sentiment-banner.Positive { border-color: var(--pos-border); background: var(--pos-bg); color: var(--pos); }
+    .sentiment-banner.Negative { border-color: var(--neg-border); background: var(--neg-bg); color: var(--neg); }
+    .sentiment-banner.Neutral  { border-color: var(--neu-border); background: var(--neu-bg); color: var(--neu); }
+
+    .sent-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 2.5px solid currentColor;
+    }
+    .sent-label-big {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 27px;
+      font-weight: 700;
+      line-height: 1.05;
+    }
+    .sent-conf {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 2px;
+    }
+
+    .mood-summary {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    .prob-triplet {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      font-size: 12px;
+    }
+    .prob-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .prob-stat-lbl {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.pos { background: #22c55e; }
+    .dot.neg { background: #ef4444; }
+    .dot.neu { background: #94a3b8; }
+    .prob-stat-val {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffffff;
+      padding-left: 13px;
+    }
+
+    .tri-bar {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.09);
+      overflow: hidden;
+      display: flex;
+    }
+    .tri-seg {
+      height: 100%;
+      transition: width 0.45s var(--ease-out);
+    }
+    .tri-pos { background: #22c55e; }
+    .tri-neg { background: #ef4444; }
+    .tri-neu { background: #94a3b8; }
+
+    /* Compact Task B & C section inside Analysis Result */
+    .details-divider {
+      height: 1px;
+      background: rgba(139, 92, 246, 0.22);
+      margin: 2px 0;
+    }
+
+    .emotions-compact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mini-panel {
+      background: var(--bg-card-inner);
+      border: 1px solid rgba(139, 92, 246, 0.18);
+      border-radius: 13px;
+      padding: 11px 13px;
+    }
+    .mini-panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .taskb-chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .emo-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 9px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+      transition: transform 0.18s var(--ease-out), border-color 0.2s ease, background 0.2s ease;
+    }
+    .emo-chip:hover { transform: translateY(-1px); }
+    .emo-chip.active {
+      background: rgba(124, 58, 237, 0.25);
+      border-color: rgba(167, 139, 250, 0.55);
+      color: #ffffff;
+    }
+    .emo-chip .pct {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .emo-chip:not(.active) .pct { color: #64748b; }
+
+    .taskc-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .intensity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 11.5px;
+    }
+    .intensity-name {
+      color: #cbd5e1;
+      font-weight: 600;
+      width: 78px;
+      flex-shrink: 0;
+    }
+    .intensity-pips {
+      display: flex;
+      gap: 3px;
+      flex: 1;
+    }
+    .pip {
+      flex: 1;
+      height: 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.10);
+      transition: background 0.25s ease;
+    }
+    .pip.on { background: linear-gradient(90deg, #8b5cf6, #facc15); }
+    .intensity-lbl {
+      font-size: 11px;
+      color: var(--gold);
+      font-weight: 700;
+      min-width: 78px;
+      text-align: right;
+    }
+    .intensity-lbl.zero { color: #64748b; font-weight: 600; }
+
+    /* Ground truth badge strip */
+    .gt-strip {
+      background: rgba(250, 204, 21, 0.08);
+      border: 1px dashed rgba(250, 204, 21, 0.38);
+      border-radius: 11px;
+      padding: 8px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+    }
+    .gt-strip strong { color: var(--gold); }
+    .gt-pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: #e2e8f0;
+    }
+
+    /* Expandable Detected Text (OCR) Toggle */
+    .ocr-drawer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ocr-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(139, 92, 246, 0.28);
+      background: rgba(139, 92, 246, 0.12);
+      color: #ddd6fe;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s var(--ease-out);
+    }
+    .ocr-toggle-btn:hover {
+      background: rgba(139, 92, 246, 0.24);
+      transform: translateY(-1px);
+    }
+    .ocr-box-wrap {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: fadeSlideIn 0.22s var(--ease-out);
+    }
+    .ocr-textarea {
+      width: 100%;
+      min-height: 68px;
+      resize: vertical;
+      border-radius: 11px;
+      border: 1px solid rgba(139, 92, 246, 0.32);
+      background: rgba(11, 9, 20, 0.85);
+      color: #f8fafc;
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 12.5px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .ocr-textarea:focus { border-color: var(--gold); }
+
+    /* ================= RECENT ANALYSIS STRIP ================= */
+    .recent-card {
+      margin-top: 22px;
+      position: relative;
+      z-index: 6;
+    }
+    .recent-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .view-all-link {
+      background: none;
+      border: none;
+      color: #a78bfa;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.2s ease, transform 0.2s var(--ease-out);
+    }
+    .view-all-link:hover { color: var(--gold); transform: translateX(3px); }
+
+    .recent-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .recent-item {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      background: #100e1c;
+      border: 1.5px solid rgba(139, 92, 246, 0.24);
+      cursor: pointer;
+      transition: transform 0.25s var(--ease-out), border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .recent-item:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--gold);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.6), 0 0 18px rgba(250, 204, 21, 0.22);
+    }
+    .recent-item.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.35);
+    }
+    .recent-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s var(--ease-out);
+    }
+    .recent-item:hover img { transform: scale(1.06); }
+
+    .recent-badge {
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      transform: translateX(-50%);
+      padding: 3px 13px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
+      white-space: nowrap;
+    }
+    .recent-badge.Positive { background: #4ade80; color: #052e16; }
+    .recent-badge.Negative { background: #fb7185; color: #4c0519; }
+    .recent-badge.Neutral  { background: #cbd5e1; color: #0f172a; }
+
+    /* ================= HISTORY & DATASET EXPLORER TAB ================= */
+    .tab-section {
+      position: relative;
+      z-index: 6;
+      animation: fadeSlideIn 0.28s var(--ease-out);
+      padding-top: 10px;
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .pill-switch {
+      display: inline-flex;
+      background: rgba(29, 25, 48, 0.9);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+    .pill-switch-btn {
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .pill-switch-btn.active {
+      background: var(--purple);
+      color: #ffffff;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .dark-input, .dark-select {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(25, 21, 42, 0.92);
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .dark-input:focus, .dark-select:focus { border-color: var(--gold); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+      gap: 16px;
+    }
+    .gallery-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.24s var(--ease-out), border-color 0.24s ease, box-shadow 0.24s ease;
+    }
+    .gallery-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+    }
+    .gallery-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #0d0b16;
+    }
+    .gallery-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+    .gallery-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .gallery-ocr {
+      font-size: 12.5px;
+      color: #e2e8f0;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .mini-tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .mini-tag.Positive { background: rgba(74, 222, 128, 0.2); color: #86efac; }
+    .mini-tag.Negative { background: rgba(251, 113, 133, 0.2); color: #fda4af; }
+    .mini-tag.Neutral  { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+    .mini-tag.emo      { background: rgba(139, 92, 246, 0.22); color: #ddd6fe; }
+
+    .pager {
+      margin-top: 22px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* ================= ABOUT & METRICS TAB ================= */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      transition: transform 0.22s var(--ease-out), border-color 0.22s ease;
+    }
+    .metric-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+    .metric-kicker {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+    .metric-big {
+      margin-top: 8px;
+      font-family: "Fredoka", "Plus Jakarta Sans", sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .metric-sub {
+      margin-top: 6px;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+    .about-list {
+      margin-top: 10px;
+      padding-left: 18px;
+      color: #cbd5e1;
+      font-size: 13.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    /* ================= ANIMATIONS ================= */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 1120px) {
+      .hero-art { width: 290px; opacity: 0.82; }
+      .corner-sticker { display: none; }
+    }
+    @media (max-width: 900px) {
+      .topbar-inner { grid-template-columns: 1fr; justify-items: center; }
+      .nav-right { justify-content: center; }
+      .hero-art { display: none; }
+      .workspace-grid { grid-template-columns: 1fr; }
+      .result-main { grid-template-columns: 1fr; }
+      .emotions-compact { grid-template-columns: 1fr; }
+      .recent-row { grid-template-columns: repeat(2, 1fr); }
+      .filter-bar { grid-template-columns: 1fr 1fr; }
+      .metrics-grid, .about-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP NAVBAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand" id="brandHomeBtn" title="MemeSense Home">
+        <div class="brand-icon">
+          <img src="/static/assets/logo_troll.png" alt="MemeSense Trollface Logo" />
+        </div>
+        <div class="brand-wordmark">
+          <span class="meme">Meme</span><span class="sense">Sense</span>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Main Navigation">
+        <button class="nav-btn active" data-tab="home">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3l9-8z"/></svg>
+          Home
+        </button>
+        <button class="nav-btn" data-tab="history">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+          History
+        </button>
+        <button class="nav-btn" data-tab="about">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          About
+        </button>
+      </nav>
+
+      <div class="nav-right">
+        <button id="langBtn" type="button" class="lang-pill" title="Dataset &amp; Language Mode">
+          <span>🇮🇳</span>
+          <span id="langLabel">Indian Memes</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div id="langMenu" class="lang-menu hidden">
+          <button class="lang-opt" data-mode="Indian Memes (EN/HI)">
+            <span>🇮🇳 Indian Memes</span><small>Hinglish</small>
+          </button>
+          <button class="lang-opt" data-mode="Memotion 3.0 Val">
+            <span>📊 Val Benchmark</span><small>1,500</small>
+          </button>
+          <button class="lang-opt" data-mode="Memotion 3.0 Test">
+            <span>🧪 Test Split</span><small>1,500</small>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CORNER COMIC STICKERS -->
+  <div class="corner-sticker sticker-left" aria-hidden="true">
+    <div class="sticker-card">
+      Meme<br /><span class="acc">Hai</span><br />Toh<br /><span class="acc">Mood Hai!</span>
+    </div>
+  </div>
+  <div class="corner-sticker sticker-right" aria-hidden="true">
+    <div class="sticker-card">
+      Analyze<br />The<br /><span class="acc">Meme!</span>
+    </div>
+    <div class="cool-emoji-badge">😎</div>
+  </div>
+
+  <main class="stage">
+    <!-- ==================== TAB 1: HOME ==================== -->
+    <section id="tab-home">
+      <!-- HERO HEADER WITH CHARACTER ART -->
+      <div class="hero">
+        <img class="hero-art hero-art-left" src="/static/assets/hero_left.png" alt="" aria-hidden="true" />
+        <img class="hero-art hero-art-right" src="/static/assets/hero_right.png" alt="" aria-hidden="true" />
+
+        <div class="hero-title-wrap">
+          <div class="hero-rays">
+            <h1 class="hero-title">
+              Indian <span class="gold">Meme</span><br />
+              Sentiment <span class="violet">Analysis</span>
+            </h1>
+          </div>
+          <div class="hero-sub">
+            <span>
+              Because every meme
+              <span class="underline-wrap">
+                has a mood!
+                <svg class="underline-svg" viewBox="0 0 180 12" fill="none">
+                  <path d="M3 8.5C46 2.5 128 2 177 7.5" stroke="#facc15" stroke-width="3.6" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO-COLUMN WORKSPACE (Centers Upload card cleanly until image is uploaded/chosen) -->
+      <div id="workspaceGrid" class="workspace-grid single-col">
+        <!-- LEFT: UPLOAD CARD -->
+        <div class="glass-card upload-card">
+          <div id="dropzone" class="dropzone" title="Drag & drop a meme or click Choose Image">
+            <input id="fileInput" type="file" accept="image/*" class="hidden" />
+
+            <div class="upload-graphic" aria-hidden="true">
+              <svg width="78" height="70" viewBox="0 0 84 76" fill="none">
+                <!-- Yellow spark rays -->
+                <path d="M12 22L3 16M15 36L4 38M70 20L79 14M68 35L79 37" stroke="#facc15" stroke-width="3" stroke-linecap="round"/>
+                <!-- Picture frame -->
+                <rect x="18" y="14" width="44" height="38" rx="8" stroke="#f8fafc" stroke-width="3" fill="rgba(124,58,237,0.14)"/>
+                <circle cx="31" cy="27" r="4" fill="#f8fafc"/>
+                <path d="M21 46L33 34L42 42L50 35L59 46" stroke="#f8fafc" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Purple upload arrow circle -->
+                <circle cx="58" cy="48" r="14" fill="#7c3aed" stroke="#1e1a33" stroke-width="2.5"/>
+                <path d="M58 54V42M53 47L58 42L63 47" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <div class="upload-title">Upload Your Meme</div>
+            <div class="upload-sub">Drag &amp; drop an image or click to browse</div>
+
+            <button id="chooseBtn" type="button" class="btn-gold">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l-4-4-4 4"/><path d="M12 12v9"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+              Choose Image
+            </button>
+
+            <div class="upload-formats">Supports: JPG, PNG, WEBP</div>
+
+            <div id="analyzingOverlay" class="analyzing-overlay hidden">
+              <div class="spinner"></div>
+              <span id="analyzingText">Extracting text &amp; analyzing meme...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: ANALYSIS RESULT CARD (Hidden when no image uploaded/chosen) -->
+        <div id="resultCard" class="glass-card result-card hidden">
+          <div class="card-top-row">
+            <div class="card-heading">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#c084fc"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
+              Analysis Result
+            </div>
+            <button id="clearBtn" type="button" class="btn-subtle" title="Clear image and hide output">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              Clear
+            </button>
+          </div>
+
+          <!-- Top Sentiment & Preview Section (matches mockup layout) -->
+          <div class="result-main">
+            <div class="result-img-box">
+              <img id="previewImg" alt="Analyzed meme preview" />
+            </div>
+
+            <div class="sentiment-col">
+              <div id="sentimentBanner" class="sentiment-banner Positive">
+                <div class="sent-icon-wrap" id="sentimentFace"></div>
+                <div>
+                  <div class="sent-label-big" id="sentimentLabel">Positive</div>
+                  <div class="sent-conf" id="sentimentConf">Confidence: 0.0%</div>
+                </div>
+              </div>
+
+              <div class="mood-summary" id="moodSummary">
+                Analysing meme sentiment and emotions...
+              </div>
+
+              <div class="prob-triplet" id="probTriplet"></div>
+              <div class="tri-bar" id="triBar"></div>
+            </div>
+          </div>
+
+          <div class="details-divider"></div>
+
+          <!-- Compact Task B & Task C Section -->
+          <div class="emotions-compact">
+            <div class="mini-panel">
+              <div class="mini-panel-title">
+                <span>Task B · Emotions</span>
+                <span id="activeCountChip" style="color: var(--gold);">0 active</span>
+              </div>
+              <div class="taskb-chips" id="taskbChips"></div>
+            </div>
+
+            <div class="mini-panel">
+              <div class="mini-panel-title">
+                <span>Task C · Intensity Scales</span>
+              </div>
+              <div class="taskc-bars" id="taskcBars"></div>
+            </div>
+          </div>
+
+          <!-- Optional Validation Ground Truth -->
+          <div id="gtStrip" class="gt-strip hidden"></div>
+
+          <!-- Expandable Detected Text (OCR) Drawer -->
+          <div>
+            <div class="ocr-drawer-bar">
+              <button id="ocrToggleBtn" type="button" class="ocr-toggle-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Detected Text (OCR)</span>
+                <span id="ocrCaret">▾</span>
+              </button>
+              <button id="reOcrBtn" type="button" class="btn-subtle hidden">Re-extract OCR</button>
+            </div>
+            <div id="ocrBoxWrap" class="ocr-box-wrap hidden">
+              <textarea id="ocrInput" class="ocr-textarea" placeholder="Detected meme caption appears here; edit to re-analyze automatically..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM: RECENT ANALYSIS STRIP -->
+      <div class="glass-card recent-card">
+        <div class="recent-header">
+          <div class="card-heading">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg>
+            Recent Analysis
+          </div>
+          <button id="viewAllBtn" type="button" class="view-all-link">
+            View All →
+          </button>
+        </div>
+        <div id="recentRow" class="recent-row"></div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: HISTORY & EXPLORER ==================== -->
+    <section id="tab-history" class="tab-section hidden">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">History &amp; Dataset Explorer</h2>
+          <p style="font-size:13px;color:var(--text-muted);">Click any meme to inspect its full Task A, B, and C predictions on Home.</p>
+        </div>
+        <div class="pill-switch">
+          <button class="pill-switch-btn active" data-hview="session">Your Session History (<span id="sessionHistCount">0</span>)</button>
+          <button class="pill-switch-btn" data-hview="dataset">Memotion 3.0 Dataset</button>
+        </div>
+      </div>
+
+      <!-- Session History View -->
+      <div id="sessionHistoryPane">
+        <div id="sessionEmpty" class="glass-card" style="text-align:center;color:var(--text-muted);padding:38px;">
+          No uploaded memes analyzed yet in this session. Upload a meme on Home or browse the Memotion 3.0 Dataset tab!
+        </div>
+        <div id="sessionHistoryGrid" class="gallery-grid"></div>
+      </div>
+
+      <!-- Dataset Explorer View -->
+      <div id="datasetExplorerPane" class="hidden">
+        <div class="filter-bar">
+          <select id="splitSelect" class="dark-select">
+            <option value="val">Validation Split (1,500 labeled)</option>
+            <option value="test">Test Split (1,500 unlabeled)</option>
+          </select>
+          <select id="sentimentFilter" class="dark-select">
+            <option value="all">All Sentiments</option>
+            <option value="Positive">Positive</option>
+            <option value="Neutral">Neutral</option>
+            <option value="Negative">Negative</option>
+          </select>
+          <select id="emotionFilter" class="dark-select">
+            <option value="all">All Emotions</option>
+            <option value="humour">Humorous</option>
+            <option value="sarcastic">Sarcastic</option>
+            <option value="offensive">Offensive</option>
+            <option value="motivational">Motivational</option>
+          </select>
+          <input id="searchInput" class="dark-input" type="search" placeholder="Search meme text or ID..." />
+        </div>
+
+        <div id="galleryGrid" class="gallery-grid"></div>
+        <div class="pager">
+          <button id="prevPage" class="btn-subtle">← Previous</button>
+          <span id="pageInfo">Page 1</span>
+          <button id="nextPage" class="btn-subtle">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: ABOUT & METRICS ==================== -->
+    <section id="tab-about" class="tab-section hidden">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">About MemeSense &amp; Training Metrics</h2>
+          <p style="font-size:13px;color:var(--text-muted);">Multimodal Memotion 3.0 (AAAI) analyzer for code-mixed Hinglish &amp; English internet memes.</p>
+        </div>
+      </div>
+
+      <div id="metricsGrid" class="metrics-grid"></div>
+
+      <div class="about-grid">
+        <div class="glass-card">
+          <div class="card-heading">Supported Tasks &amp; Architecture</div>
+          <ul class="about-list">
+            <li><strong>Task A — Sentiment Analysis:</strong> Classifies memes into <em>Positive</em>, <em>Negative</em>, or <em>Neutral</em> using TF-IDF (word + char n-grams), MobileNetV2 visual embeddings, CV visual stats, Dual-Branch Neural Nets, Logistic Regression, and XGBoost.</li>
+            <li><strong>Task B — Multi-Label Emotion Classification:</strong> Detects <em>Humorous</em>, <em>Sarcastic</em>, <em>Offensive</em>, and <em>Motivational</em> signals simultaneously.</li>
+            <li><strong>Task C — Emotion Intensity Scales:</strong> Quantifies emotion strength (0–3 for Humour/Sarcastic/Offensive, 0–1 for Motivational) with Task B↔C consistency enforcement.</li>
+            <li><strong>Multi-Pass Meme OCR:</strong> Upscaled, sharpened, and high-contrast Windows Media OCR automatically extracts meme captions on upload, editable inside the Detected Text drawer.</li>
+          </ul>
+        </div>
+        <div class="glass-card">
+          <div class="card-heading">Dataset Coverage</div>
+          <ul id="datasetStatsList" class="about-list">
+            <li>Loading dataset counts...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const EMOTION_NAMES = {
+      humour: "Humorous",
+      sarcastic: "Sarcastic",
+      offensive: "Offensive",
+      motivational: "Motivational",
+    };
+
+    const state = {
+      schema: null,
+      metrics: null,
+      uploadedFile: null,
+      uploadedDataUrl: null,
+      sampleRef: null,
+      recentItems: [],
+      sessionHistory: [],
+      pageOffset: 0,
+      pageLimit: 12,
+      totalSamples: 0,
+      editTimer: null,
+    };
+
+    // DOM elements
+    const navBtns = document.querySelectorAll(".nav-btn");
+    const brandHomeBtn = document.getElementById("brandHomeBtn");
+    const tabHome = document.getElementById("tab-home");
+    const tabHistory = document.getElementById("tab-history");
+    const tabAbout = document.getElementById("tab-about");
+
+    const langBtn = document.getElementById("langBtn");
+    const langMenu = document.getElementById("langMenu");
+    const langLabel = document.getElementById("langLabel");
+
+    const workspaceGrid = document.getElementById("workspaceGrid");
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const chooseBtn = document.getElementById("chooseBtn");
+    const analyzingOverlay = document.getElementById("analyzingOverlay");
+    const analyzingText = document.getElementById("analyzingText");
+
+    const resultCard = document.getElementById("resultCard");
+    const clearBtn = document.getElementById("clearBtn");
+    const previewImg = document.getElementById("previewImg");
+
+    const ocrToggleBtn = document.getElementById("ocrToggleBtn");
+    const ocrBoxWrap = document.getElementById("ocrBoxWrap");
+    const ocrCaret = document.getElementById("ocrCaret");
+    const ocrInput = document.getElementById("ocrInput");
+    const reOcrBtn = document.getElementById("reOcrBtn");
+
+    function switchTab(name) {
+      navBtns.forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+      tabHome.classList.toggle("hidden", name !== "home");
+      tabHistory.classList.toggle("hidden", name !== "history");
+      tabAbout.classList.toggle("hidden", name !== "about");
+      if (name === "history") {
+        renderSessionHistory();
+      }
+    }
+
+    navBtns.forEach(btn => btn.addEventListener("click", () => switchTab(btn.dataset.tab)));
+    brandHomeBtn.addEventListener("click", () => switchTab("home"));
+    document.getElementById("viewAllBtn").addEventListener("click", () => {
+      switchTab("history");
+      setHistorySubView("dataset");
+    });
+
+    // Top-right Indian Memes menu
+    langBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      langMenu.classList.toggle("hidden");
+    });
+    document.addEventListener("click", () => langMenu.classList.add("hidden"));
+    document.querySelectorAll(".lang-opt").forEach(opt => {
+      opt.addEventListener("click", () => {
+        const mode = opt.dataset.mode;
+        if (mode.includes("Val")) {
+          langLabel.textContent = "Val Memes";
+          document.getElementById("splitSelect").value = "val";
+          switchTab("history");
+          setHistorySubView("dataset");
+          state.pageOffset = 0;
+          loadGallery();
+        } else if (mode.includes("Test")) {
+          langLabel.textContent = "Test Memes";
+          document.getElementById("splitSelect").value = "test";
+          switchTab("history");
+          setHistorySubView("dataset");
+          state.pageOffset = 0;
+          loadGallery();
+        } else {
+          langLabel.textContent = "Indian Memes";
+          switchTab("home");
+        }
+      });
+    });
+
+    // History sub-views
+    function setHistorySubView(view) {
+      document.querySelectorAll(".pill-switch-btn").forEach(b => b.classList.toggle("active", b.dataset.hview === view));
+      document.getElementById("sessionHistoryPane").classList.toggle("hidden", view !== "session");
+      document.getElementById("datasetExplorerPane").classList.toggle("hidden", view !== "dataset");
+      if (view === "dataset" && !document.getElementById("galleryGrid").children.length) {
+        loadGallery();
+      }
+    }
+    document.querySelectorAll(".pill-switch-btn").forEach(btn => {
+      btn.addEventListener("click", () => setHistorySubView(btn.dataset.hview));
+    });
+
+    // OCR Drawer Toggle
+    ocrToggleBtn.addEventListener("click", () => {
+      const hidden = ocrBoxWrap.classList.toggle("hidden");
+      ocrCaret.textContent = hidden ? "▾" : "▴";
+    });
+
+    function setBusy(busy, msg = "Extracting text & analyzing meme...") {
+      analyzingText.textContent = msg;
+      analyzingOverlay.classList.toggle("hidden", !busy);
+    }
+
+    function showResultLayout(visible) {
+      resultCard.classList.toggle("hidden", !visible);
+      workspaceGrid.classList.toggle("single-col", !visible);
+    }
+
+    // Dropzone & Upload Events
+    chooseBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", e => { e.preventDefault(); dropzone.classList.add("dragover"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+    dropzone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+      if (e.dataTransfer.files.length) handleFileUpload(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length) handleFileUpload(fileInput.files[0]);
+    });
+
+    function readAsDataURL(file) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleFileUpload(file) {
+      clearTimeout(state.editTimer);
+      state.uploadedFile = file;
+      state.sampleRef = null;
+      const dataUrl = await readAsDataURL(file);
+      state.uploadedDataUrl = dataUrl;
+      previewImg.src = dataUrl;
+      reOcrBtn.classList.remove("hidden");
+      document.querySelectorAll(".recent-item").forEach(el => el.classList.remove("selected"));
+
+      await runUploadOcr();
+      await analyzeCurrent(true);
+    }
+
+    async function runUploadOcr() {
+      if (!state.uploadedFile) return;
+      setBusy(true, "Extracting meme caption (OCR)...");
+      try {
+        const fd = new FormData();
+        fd.append("image", state.uploadedFile);
+        const res = await fetch("/api/ocr", { method: "POST", body: fd });
+        const data = await res.json();
+        ocrInput.value = data.ocr || "";
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    reOcrBtn.addEventListener("click", async () => {
+      await runUploadOcr();
+      await analyzeCurrent(false);
+    });
+
+    ocrInput.addEventListener("input", () => {
+      if (!state.uploadedFile && !state.sampleRef) return;
+      clearTimeout(state.editTimer);
+      state.editTimer = setTimeout(() => analyzeCurrent(false), 550);
+    });
+
+    clearBtn.addEventListener("click", () => {
+      clearTimeout(state.editTimer);
+      state.uploadedFile = null;
+      state.uploadedDataUrl = null;
+      state.sampleRef = null;
+      fileInput.value = "";
+      previewImg.src = "";
+      ocrInput.value = "";
+      reOcrBtn.classList.add("hidden");
+      ocrBoxWrap.classList.add("hidden");
+      ocrCaret.textContent = "▾";
+      document.getElementById("gtStrip").classList.add("hidden");
+      document.querySelectorAll(".recent-item").forEach(el => el.classList.remove("selected"));
+      // Hide output completely until a meme is uploaded or chosen
+      showResultLayout(false);
+    });
+
+    async function analyzeCurrent(recordInHistory = false) {
+      if (!state.uploadedFile && !state.sampleRef) return;
+      setBusy(true, "Analyzing sentiment & emotions...");
+      try {
+        const fd = new FormData();
+        fd.append("ocr_text", ocrInput.value);
+        if (state.sampleRef) {
+          fd.append("split", state.sampleRef.split);
+          fd.append("sample_id", state.sampleRef.id);
+        } else if (state.uploadedFile) {
+          fd.append("image", state.uploadedFile);
+          fd.append("auto_ocr", "false");
+        }
+        const res = await fetch("/api/analyze", { method: "POST", body: fd });
+        const data = await res.json();
+        renderPrediction(data);
+
+        if (recordInHistory && state.uploadedDataUrl) {
+          const histItem = {
+            id: Date.now(),
+            title: state.uploadedFile ? state.uploadedFile.name : "Uploaded Meme",
+            thumbUrl: state.uploadedDataUrl,
+            ocr: data.ocr_used || ocrInput.value,
+            prediction: { task_a: data.task_a, task_b: data.task_b, task_c: data.task_c },
+            ground_truth: null,
+            isUpload: true,
+          };
+          state.sessionHistory.unshift(histItem);
+          document.getElementById("sessionHistCount").textContent = state.sessionHistory.length;
+          // Push to front of Recent Analysis strip (cap at 5)
+          state.recentItems.unshift(histItem);
+          state.recentItems = state.recentItems.slice(0, 5);
+          renderRecentStrip();
+        }
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function loadSampleIntoAnalyzer(item) {
+      clearTimeout(state.editTimer);
+      if (item.isUpload) {
+        state.uploadedFile = null;
+        state.uploadedDataUrl = item.thumbUrl;
+        state.sampleRef = null;
+        previewImg.src = item.thumbUrl;
+        reOcrBtn.classList.add("hidden");
+      } else {
+        state.uploadedFile = null;
+        state.uploadedDataUrl = null;
+        state.sampleRef = { split: item.split, id: item.id };
+        previewImg.src = `/api/image/${item.split}/${item.id}`;
+        reOcrBtn.classList.add("hidden");
+      }
+      ocrInput.value = item.ocr || "";
+      renderPrediction({
+        task_a: item.prediction.task_a,
+        task_b: item.prediction.task_b,
+        task_c: item.prediction.task_c,
+        ground_truth: item.ground_truth || null,
+      });
+      renderRecentStrip();
+      switchTab("home");
+      window.scrollTo({ top: 140, behavior: "smooth" });
+    }
+
+    function faceSvg(label) {
+      if (label === "Positive") {
+        return `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8 14.5c1.1 1.6 2.5 2.4 4 2.4s2.9-.8 4-2.4"/></svg>`;
+      }
+      if (label === "Negative") {
+        return `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.5 16.2c1-1.3 2.2-2 3.5-2s2.5.7 3.5 2"/></svg>`;
+      }
+      return `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><line x1="8.5" y1="15" x2="15.5" y2="15"/></svg>`;
+    }
+
+    function buildMoodSummary(ta, tb) {
+      const active = Object.keys(EMOTION_NAMES).filter(k => tb[k] && tb[k].active).map(k => EMOTION_NAMES[k].toLowerCase());
+      const base = ta.label === "Positive"
+        ? "This meme expresses a positive sentiment"
+        : ta.label === "Negative"
+          ? "This meme carries a negative or critical sentiment"
+          : "This meme reflects a balanced or neutral sentiment";
+      if (!active.length) return base + ".";
+      if (active.length === 1) return `${base}, highlighting a ${active[0]} tone.`;
+      const last = active.pop();
+      return `${base}, blending ${active.join(", ")} and ${last} tones.`;
+    }
+
+    function renderPrediction(data) {
+      showResultLayout(true);
+
+      const ta = data.task_a;
+      const tb = data.task_b;
+      const tc = data.task_c;
+
+      const pNeg = (ta.probs[0] || 0) * 100;
+      const pNeu = (ta.probs[1] || 0) * 100;
+      const pPos = (ta.probs[2] || 0) * 100;
+      const topConf = Math.max(pNeg, pNeu, pPos);
+
+      const banner = document.getElementById("sentimentBanner");
+      banner.className = `sentiment-banner ${ta.label}`;
+      document.getElementById("sentimentFace").innerHTML = faceSvg(ta.label);
+      document.getElementById("sentimentLabel").textContent = ta.label;
+      document.getElementById("sentimentConf").textContent = `Confidence: ${topConf.toFixed(1)}%`;
+      document.getElementById("moodSummary").textContent = buildMoodSummary(ta, tb);
+
+      document.getElementById("probTriplet").innerHTML = `
+        <div class="prob-stat">
+          <span class="prob-stat-lbl"><span class="dot pos"></span>Positive</span>
+          <span class="prob-stat-val">${pPos.toFixed(1)}%</span>
+        </div>
+        <div class="prob-stat">
+          <span class="prob-stat-lbl"><span class="dot neg"></span>Negative</span>
+          <span class="prob-stat-val">${pNeg.toFixed(1)}%</span>
+        </div>
+        <div class="prob-stat">
+          <span class="prob-stat-lbl"><span class="dot neu"></span>Neutral</span>
+          <span class="prob-stat-val">${pNeu.toFixed(1)}%</span>
+        </div>
+      `;
+
+      document.getElementById("triBar").innerHTML = `
+        <div class="tri-seg tri-pos" style="width:${pPos.toFixed(1)}%"></div>
+        <div class="tri-seg tri-neg" style="width:${pNeg.toFixed(1)}%"></div>
+        <div class="tri-seg tri-neu" style="width:${pNeu.toFixed(1)}%"></div>
+      `;
+
+      // Task B compact chips
+      let activeCnt = 0;
+      document.getElementById("taskbChips").innerHTML = Object.keys(EMOTION_NAMES).map(k => {
+        const it = tb[k];
+        if (it.active) activeCnt++;
+        return `
+          <div class="emo-chip ${it.active ? "active" : ""}">
+            <span>${EMOTION_NAMES[k]}</span>
+            <span class="pct">${Math.round(it.prob * 100)}%</span>
+          </div>
+        `;
+      }).join("");
+      document.getElementById("activeCountChip").textContent = `${activeCnt} active`;
+
+      // Task C compact intensity bars
+      const schemaEmotions = state.schema ? state.schema.emotions : [];
+      document.getElementById("taskcBars").innerHTML = schemaEmotions.map(em => {
+        const pred = tc[em.key];
+        const maxLvl = pred.max_level || (em.scale.length - 1);
+        let pips = "";
+        for (let i = 1; i <= maxLvl; i++) {
+          pips += `<span class="pip ${pred.level >= i ? "on" : ""}"></span>`;
+        }
+        return `
+          <div class="intensity-row">
+            <span class="intensity-name">${em.name}</span>
+            <div class="intensity-pips">${pips}</div>
+            <span class="intensity-lbl ${pred.level === 0 ? "zero" : ""}">${pred.label}</span>
+          </div>
+        `;
+      }).join("");
+
+      // Ground Truth strip (validation samples only)
+      const gtStrip = document.getElementById("gtStrip");
+      if (data.ground_truth) {
+        const gt = data.ground_truth;
+        gtStrip.classList.remove("hidden");
+        gtStrip.innerHTML = `
+          <strong>Ground Truth:</strong>
+          <span class="gt-pill">Sentiment: ${gt.task_a.label}</span>
+          ${Object.keys(EMOTION_NAMES).map(k => `<span class="gt-pill">${EMOTION_NAMES[k]}: ${gt.task_c[k].label}</span>`).join("")}
+        `;
+      } else {
+        gtStrip.classList.add("hidden");
+      }
+    }
+
+    function renderRecentStrip() {
+      const row = document.getElementById("recentRow");
+      const list = state.recentItems.slice(0, 5);
+      row.innerHTML = "";
+      list.forEach(item => {
+        const sent = item.prediction.task_a.label;
+        const imgUrl = item.isUpload ? item.thumbUrl : `/api/image/${item.split}/${item.id}`;
+        const isSelected = (!item.isUpload && state.sampleRef && state.sampleRef.split === item.split && state.sampleRef.id === item.id) ||
+                           (item.isUpload && state.uploadedDataUrl === item.thumbUrl);
+        const div = document.createElement("div");
+        div.className = `recent-item ${isSelected ? "selected" : ""}`;
+        div.title = (item.ocr || "").slice(0, 90) || "Click to analyze meme";
+        div.innerHTML = `
+          <img src="${imgUrl}" alt="Recent analyzed meme" loading="lazy" />
+          <span class="recent-badge ${sent}">${sent}</span>
+        `;
+        div.addEventListener("click", () => loadSampleIntoAnalyzer(item));
+        row.appendChild(div);
+      });
+    }
+
+    function renderSessionHistory() {
+      const empty = document.getElementById("sessionEmpty");
+      const grid = document.getElementById("sessionHistoryGrid");
+      grid.innerHTML = "";
+      empty.classList.toggle("hidden", state.sessionHistory.length > 0);
+      state.sessionHistory.forEach(item => {
+        const sent = item.prediction.task_a.label;
+        const activeEmos = Object.keys(EMOTION_NAMES).filter(k => item.prediction.task_b[k].active);
+        const card = document.createElement("div");
+        card.className = "gallery-card";
+        card.innerHTML = `
+          <img src="${item.thumbUrl}" alt="Session meme" />
+          <div class="gallery-body">
+            <div class="gallery-meta">
+              <span>${item.title}</span>
+              <span class="mini-tag ${sent}">${sent}</span>
+            </div>
+            <div class="gallery-ocr">${item.ocr || "<em>No text detected</em>"}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;">
+              ${activeEmos.map(k => `<span class="mini-tag emo">${EMOTION_NAMES[k]}</span>`).join("")}
+            </div>
+          </div>
+        `;
+        card.addEventListener("click", () => loadSampleIntoAnalyzer(item));
+        grid.appendChild(card);
+      });
+    }
+
+    function renderMetrics(metrics) {
+      const s = metrics.summary;
+      document.getElementById("metricsGrid").innerHTML = `
+        <div class="metric-card">
+          <div class="metric-kicker">Task A — Sentiment</div>
+          <div class="metric-big">${(metrics.task_a.weighted_f1 * 100).toFixed(1)}% <span style="font-size:13px;color:var(--text-muted);font-weight:600">Weighted F1</span></div>
+          <div class="metric-sub">Accuracy: ${(metrics.task_a.accuracy * 100).toFixed(1)}% · Macro F1: ${(metrics.task_a.macro_f1 * 100).toFixed(1)}% (Val n=${s.val_count})</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-kicker">Task B — Emotions (4 Labels)</div>
+          <div class="metric-big">${(s.task_b_avg_weighted_f1 * 100).toFixed(1)}% <span style="font-size:13px;color:var(--text-muted);font-weight:600">Avg Weighted F1</span></div>
+          <div class="metric-sub">Humour ${(metrics.task_b.humour.weighted_f1 * 100).toFixed(0)}% · Sarcastic ${(metrics.task_b.sarcastic.weighted_f1 * 100).toFixed(0)}% · Offensive ${(metrics.task_b.offensive.weighted_f1 * 100).toFixed(0)}% · Motivational ${(metrics.task_b.motivational.weighted_f1 * 100).toFixed(0)}%</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-kicker">Task C — Intensity Scales</div>
+          <div class="metric-big">${(s.task_c_avg_weighted_f1 * 100).toFixed(1)}% <span style="font-size:13px;color:var(--text-muted);font-weight:600">Avg Weighted F1</span></div>
+          <div class="metric-sub">Humour ${(metrics.task_c.humour.weighted_f1 * 100).toFixed(0)}% · Sarcastic ${(metrics.task_c.sarcastic.weighted_f1 * 100).toFixed(0)}% · Offensive ${(metrics.task_c.offensive.weighted_f1 * 100).toFixed(0)}% · Motivational ${(metrics.task_c.motivational.weighted_f1 * 100).toFixed(0)}%</div>
+        </div>
+      `;
+      document.getElementById("datasetStatsList").innerHTML = `
+        <li><strong>Training Split:</strong> ${s.train_count.toLocaleString()} memes (code-mixed Hindi-English + image embeddings)</li>
+        <li><strong>Validation Split:</strong> ${s.val_count.toLocaleString()} labeled memes</li>
+        <li><strong>Test Split:</strong> ${s.test_count.toLocaleString()} memes</li>
+        <li><strong>Visual Backbone:</strong> MobileNetV2 (1280-d) + 18-d CV color/edge stats</li>
+      `;
+    }
+
+    async function loadGallery() {
+      const split = document.getElementById("splitSelect").value;
+      const sentiment = document.getElementById("sentimentFilter").value;
+      const emotion = document.getElementById("emotionFilter").value;
+      const q = document.getElementById("searchInput").value;
+      const params = new URLSearchParams({
+        split,
+        offset: state.pageOffset,
+        limit: state.pageLimit,
+        sentiment,
+        emotion,
+        q,
+      });
+      const res = await fetch(`/api/samples?${params.toString()}`);
+      const data = await res.json();
+      state.totalSamples = data.total;
+
+      const grid = document.getElementById("galleryGrid");
+      grid.innerHTML = "";
+      data.items.forEach(item => {
+        const sent = item.prediction.task_a.label;
+        const activeEmos = Object.keys(EMOTION_NAMES).filter(k => item.prediction.task_b[k].active);
+        const card = document.createElement("div");
+        card.className = "gallery-card";
+        card.innerHTML = `
+          <img src="/api/image/${item.split}/${item.id}" alt="Meme #${item.id}" loading="lazy" />
+          <div class="gallery-body">
+            <div class="gallery-meta">
+              <span>${item.split.toUpperCase()} #${item.id}</span>
+              <span class="mini-tag ${sent}">${sent}</span>
+            </div>
+            <div class="gallery-ocr">${item.ocr || "<em>No text detected</em>"}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;">
+              ${activeEmos.map(k => `<span class="mini-tag emo">${EMOTION_NAMES[k]}</span>`).join("")}
+            </div>
+          </div>
+        `;
+        card.addEventListener("click", () => loadSampleIntoAnalyzer(item));
+        grid.appendChild(card);
+      });
+
+      const page = Math.floor(state.pageOffset / state.pageLimit) + 1;
+      const totalPages = Math.max(1, Math.ceil(state.totalSamples / state.pageLimit));
+      document.getElementById("pageInfo").textContent = `Page ${page} of ${totalPages} (${state.totalSamples} memes)`;
+      document.getElementById("prevPage").disabled = state.pageOffset === 0;
+      document.getElementById("nextPage").disabled = state.pageOffset + state.pageLimit >= state.totalSamples;
+    }
+
+    ["splitSelect", "sentimentFilter", "emotionFilter"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => {
+        state.pageOffset = 0;
+        loadGallery();
+      });
+    });
+    let searchTimer = null;
+    document.getElementById("searchInput").addEventListener("input", () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => { state.pageOffset = 0; loadGallery(); }, 250);
+    });
+    document.getElementById("prevPage").addEventListener("click", () => {
+      state.pageOffset = Math.max(0, state.pageOffset - state.pageLimit);
+      loadGallery();
+    });
+    document.getElementById("nextPage").addEventListener("click", () => {
+      if (state.pageOffset + state.pageLimit < state.totalSamples) {
+        state.pageOffset += state.pageLimit;
+        loadGallery();
+      }
+    });
+
+    async function init() {
+      const res = await fetch("/api/overview");
+      const data = await res.json();
+      state.schema = data.schema;
+      state.metrics = data.metrics;
+      renderMetrics(data.metrics);
+
+      // Build varied 5-item Recent Analysis strip (mix Positive/Negative/Neutral if present)
+      const valList = data.featured_samples.val || [];
+      const testList = data.featured_samples.test || [];
+      const combined = [...valList, ...testList];
+      state.recentItems = combined.slice(0, 5);
+      renderRecentStrip();
+
+      // Start with Analysis Result hidden until user uploads or chooses a meme
+      showResultLayout(false);
+    }
+
+    init();
+  </script>
+</body>
+</html>

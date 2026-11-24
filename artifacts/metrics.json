@@ -1,0 +1,59 @@
+{
+  "task_a": {
+    "weighted_f1": 0.3187,
+    "macro_f1": 0.3082,
+    "accuracy": 0.354
+  },
+  "task_b": {
+    "humour": {
+      "weighted_f1": 0.9021,
+      "macro_f1": 0.4829,
+      "accuracy": 0.934
+    },
+    "sarcastic": {
+      "weighted_f1": 0.8788,
+      "macro_f1": 0.4786,
+      "accuracy": 0.918
+    },
+    "offensive": {
+      "weighted_f1": 0.4766,
+      "macro_f1": 0.4849,
+      "accuracy": 0.4913
+    },
+    "motivational": {
+      "weighted_f1": 0.9572,
+      "macro_f1": 0.4927,
+      "accuracy": 0.9713
+    }
+  },
+  "task_c": {
+    "humour": {
+      "weighted_f1": 0.5273,
+      "macro_f1": 0.2315,
+      "accuracy": 0.5953
+    },
+    "sarcastic": {
+      "weighted_f1": 0.3167,
+      "macro_f1": 0.1842,
+      "accuracy": 0.3233
+    },
+    "offensive": {
+      "weighted_f1": 0.4144,
+      "macro_f1": 0.227,
+      "accuracy": 0.4327
+    },
+    "motivational": {
+      "weighted_f1": 0.9572,
+      "macro_f1": 0.4927,
+      "accuracy": 0.9713
+    }
+  },
+  "summary": {
+    "task_a_weighted_f1": 0.3187,
+    "task_b_avg_weighted_f1": 0.8037,
+    "task_c_avg_weighted_f1": 0.5539,
+    "train_count": 7000,
+    "val_count": 1500,
+    "test_count": 1500
+  }
+}
