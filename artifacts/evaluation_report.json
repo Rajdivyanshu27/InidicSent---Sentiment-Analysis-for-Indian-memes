@@ -1,0 +1,1833 @@
+{
+  "val_count": 1500,
+  "train_count": 7000,
+  "modalities": {
+    "text_only": {
+      "task_a": {
+        "accuracy": 0.348,
+        "precision_weighted": 0.3549,
+        "recall_weighted": 0.348,
+        "f1_weighted": 0.3314,
+        "precision_macro": 0.339,
+        "recall_macro": 0.335,
+        "f1_macro": 0.3197,
+        "labels": [
+          "Negative",
+          "Neutral",
+          "Positive"
+        ],
+        "per_class": [
+          {
+            "label": "Negative",
+            "precision": 0.4021,
+            "recall": 0.1983,
+            "f1": 0.2656,
+            "support": 580
+          },
+          {
+            "label": "Neutral",
+            "precision": 0.3754,
+            "recall": 0.5544,
+            "f1": 0.4477,
+            "support": 579
+          },
+          {
+            "label": "Positive",
+            "precision": 0.2396,
+            "recall": 0.2522,
+            "f1": 0.2457,
+            "support": 341
+          }
+        ],
+        "confusion_matrix": [
+          [
+            115,
+            337,
+            128
+          ],
+          [
+            113,
+            321,
+            145
+          ],
+          [
+            58,
+            197,
+            86
+          ]
+        ]
+      },
+      "task_b": {
+        "humour": {
+          "accuracy": 0.9333,
+          "precision_weighted": 0.8723,
+          "recall_weighted": 0.9333,
+          "f1_weighted": 0.9018,
+          "precision_macro": 0.467,
+          "recall_macro": 0.4996,
+          "f1_macro": 0.4828,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Active",
+              "precision": 0.934,
+              "recall": 0.9993,
+              "f1": 0.9655,
+              "support": 1401
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              99
+            ],
+            [
+              1,
+              1400
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.918,
+          "precision_weighted": 0.8427,
+          "recall_weighted": 0.918,
+          "f1_weighted": 0.8788,
+          "precision_macro": 0.459,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4786,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "Active",
+              "precision": 0.918,
+              "recall": 1.0,
+              "f1": 0.9572,
+              "support": 1377
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              123
+            ],
+            [
+              0,
+              1377
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.5087,
+          "precision_weighted": 0.5459,
+          "recall_weighted": 0.5087,
+          "f1_weighted": 0.4999,
+          "precision_macro": 0.5339,
+          "recall_macro": 0.5314,
+          "f1_macro": 0.5056,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.4509,
+              "recall": 0.688,
+              "f1": 0.5448,
+              "support": 641
+            },
+            {
+              "label": "Active",
+              "precision": 0.6169,
+              "recall": 0.3749,
+              "f1": 0.4663,
+              "support": 859
+            }
+          ],
+          "confusion_matrix": [
+            [
+              441,
+              200
+            ],
+            [
+              537,
+              322
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Active",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "task_c": {
+        "humour": {
+          "accuracy": 0.592,
+          "precision_weighted": 0.4884,
+          "recall_weighted": 0.592,
+          "f1_weighted": 0.5284,
+          "precision_macro": 0.2287,
+          "recall_macro": 0.2527,
+          "f1_macro": 0.2342,
+          "labels": [
+            "Not Funny",
+            "Funny",
+            "Very Funny",
+            "Hilarious"
+          ],
+          "per_class": [
+            {
+              "label": "Not Funny",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Funny",
+              "precision": 0.6515,
+              "recall": 0.851,
+              "f1": 0.738,
+              "support": 973
+            },
+            {
+              "label": "Very Funny",
+              "precision": 0.2632,
+              "recall": 0.16,
+              "f1": 0.199,
+              "support": 375
+            },
+            {
+              "label": "Hilarious",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 53
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              87,
+              12,
+              0
+            ],
+            [
+              0,
+              828,
+              145,
+              0
+            ],
+            [
+              0,
+              315,
+              60,
+              0
+            ],
+            [
+              1,
+              41,
+              11,
+              0
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.3213,
+          "precision_weighted": 0.4927,
+          "recall_weighted": 0.3213,
+          "f1_weighted": 0.3325,
+          "precision_macro": 0.2324,
+          "recall_macro": 0.2471,
+          "f1_macro": 0.1893,
+          "labels": [
+            "Not Sarcastic",
+            "General",
+            "Twisted Meaning",
+            "Very Twisted"
+          ],
+          "per_class": [
+            {
+              "label": "Not Sarcastic",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "General",
+              "precision": 0.6554,
+              "recall": 0.2569,
+              "f1": 0.3691,
+              "support": 977
+            },
+            {
+              "label": "Twisted Meaning",
+              "precision": 0.2621,
+              "recall": 0.6064,
+              "f1": 0.366,
+              "support": 376
+            },
+            {
+              "label": "Very Twisted",
+              "precision": 0.0121,
+              "recall": 0.125,
+              "f1": 0.0221,
+              "support": 24
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              36,
+              67,
+              20
+            ],
+            [
+              0,
+              251,
+              560,
+              166
+            ],
+            [
+              0,
+              90,
+              228,
+              58
+            ],
+            [
+              0,
+              6,
+              15,
+              3
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.4227,
+          "precision_weighted": 0.4934,
+          "recall_weighted": 0.4227,
+          "f1_weighted": 0.4116,
+          "precision_macro": 0.2607,
+          "recall_macro": 0.2535,
+          "f1_macro": 0.2309,
+          "labels": [
+            "Not Offensive",
+            "Slight",
+            "Very Offensive",
+            "Hateful Offensive"
+          ],
+          "per_class": [
+            {
+              "label": "Not Offensive",
+              "precision": 0.4509,
+              "recall": 0.688,
+              "f1": 0.5448,
+              "support": 641
+            },
+            {
+              "label": "Slight",
+              "precision": 0.5592,
+              "recall": 0.2351,
+              "f1": 0.331,
+              "support": 804
+            },
+            {
+              "label": "Very Offensive",
+              "precision": 0.0325,
+              "recall": 0.0909,
+              "f1": 0.0479,
+              "support": 44
+            },
+            {
+              "label": "Hateful Offensive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 11
+            }
+          ],
+          "confusion_matrix": [
+            [
+              441,
+              140,
+              44,
+              16
+            ],
+            [
+              502,
+              189,
+              75,
+              38
+            ],
+            [
+              28,
+              5,
+              4,
+              7
+            ],
+            [
+              7,
+              4,
+              0,
+              0
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Not Motivational",
+            "Motivational"
+          ],
+          "per_class": [
+            {
+              "label": "Not Motivational",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Motivational",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "summary": {
+        "task_a": {
+          "accuracy": 0.348,
+          "precision_weighted": 0.3549,
+          "recall_weighted": 0.348,
+          "f1_weighted": 0.3314,
+          "precision_macro": 0.339,
+          "recall_macro": 0.335,
+          "f1_macro": 0.3197
+        },
+        "task_b_avg": {
+          "accuracy": 0.8328,
+          "precision_weighted": 0.8011,
+          "recall_weighted": 0.8328,
+          "f1_weighted": 0.8094,
+          "precision_macro": 0.4864,
+          "recall_macro": 0.5078,
+          "f1_macro": 0.4899
+        },
+        "task_c_avg": {
+          "accuracy": 0.5768,
+          "precision_weighted": 0.6045,
+          "recall_weighted": 0.5768,
+          "f1_weighted": 0.5574,
+          "precision_macro": 0.3019,
+          "recall_macro": 0.3133,
+          "f1_macro": 0.2868
+        }
+      }
+    },
+    "image_only": {
+      "task_a": {
+        "accuracy": 0.3287,
+        "precision_weighted": 0.3363,
+        "recall_weighted": 0.3287,
+        "f1_weighted": 0.3126,
+        "precision_macro": 0.3215,
+        "recall_macro": 0.3324,
+        "f1_macro": 0.3079,
+        "labels": [
+          "Negative",
+          "Neutral",
+          "Positive"
+        ],
+        "per_class": [
+          {
+            "label": "Negative",
+            "precision": 0.336,
+            "recall": 0.1448,
+            "f1": 0.2024,
+            "support": 580
+          },
+          {
+            "label": "Neutral",
+            "precision": 0.4006,
+            "recall": 0.4974,
+            "f1": 0.4438,
+            "support": 579
+          },
+          {
+            "label": "Positive",
+            "precision": 0.2279,
+            "recall": 0.3548,
+            "f1": 0.2775,
+            "support": 341
+          }
+        ],
+        "confusion_matrix": [
+          [
+            84,
+            280,
+            216
+          ],
+          [
+            97,
+            288,
+            194
+          ],
+          [
+            69,
+            151,
+            121
+          ]
+        ]
+      },
+      "task_b": {
+        "humour": {
+          "accuracy": 0.934,
+          "precision_weighted": 0.8724,
+          "recall_weighted": 0.934,
+          "f1_weighted": 0.9021,
+          "precision_macro": 0.467,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4829,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Active",
+              "precision": 0.934,
+              "recall": 1.0,
+              "f1": 0.9659,
+              "support": 1401
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              99
+            ],
+            [
+              0,
+              1401
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.918,
+          "precision_weighted": 0.8427,
+          "recall_weighted": 0.918,
+          "f1_weighted": 0.8788,
+          "precision_macro": 0.459,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4786,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "Active",
+              "precision": 0.918,
+              "recall": 1.0,
+              "f1": 0.9572,
+              "support": 1377
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              123
+            ],
+            [
+              0,
+              1377
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.4553,
+          "precision_weighted": 0.4831,
+          "recall_weighted": 0.4553,
+          "f1_weighted": 0.4475,
+          "precision_macro": 0.4736,
+          "recall_macro": 0.4752,
+          "f1_macro": 0.4529,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.4083,
+              "recall": 0.6115,
+              "f1": 0.4897,
+              "support": 641
+            },
+            {
+              "label": "Active",
+              "precision": 0.5389,
+              "recall": 0.3388,
+              "f1": 0.416,
+              "support": 859
+            }
+          ],
+          "confusion_matrix": [
+            [
+              392,
+              249
+            ],
+            [
+              568,
+              291
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Active",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "task_c": {
+        "humour": {
+          "accuracy": 0.6133,
+          "precision_weighted": 0.4831,
+          "recall_weighted": 0.6133,
+          "f1_weighted": 0.5241,
+          "precision_macro": 0.2246,
+          "recall_macro": 0.2499,
+          "f1_macro": 0.222,
+          "labels": [
+            "Not Funny",
+            "Funny",
+            "Very Funny",
+            "Hilarious"
+          ],
+          "per_class": [
+            {
+              "label": "Not Funny",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Funny",
+              "precision": 0.6484,
+              "recall": 0.9116,
+              "f1": 0.7578,
+              "support": 973
+            },
+            {
+              "label": "Very Funny",
+              "precision": 0.25,
+              "recall": 0.088,
+              "f1": 0.1302,
+              "support": 375
+            },
+            {
+              "label": "Hilarious",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 53
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              93,
+              6,
+              0
+            ],
+            [
+              0,
+              887,
+              86,
+              0
+            ],
+            [
+              0,
+              342,
+              33,
+              0
+            ],
+            [
+              0,
+              46,
+              7,
+              0
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.4207,
+          "precision_weighted": 0.4824,
+          "recall_weighted": 0.4207,
+          "f1_weighted": 0.4337,
+          "precision_macro": 0.2311,
+          "recall_macro": 0.2635,
+          "f1_macro": 0.2284,
+          "labels": [
+            "Not Sarcastic",
+            "General",
+            "Twisted Meaning",
+            "Very Twisted"
+          ],
+          "per_class": [
+            {
+              "label": "Not Sarcastic",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "General",
+              "precision": 0.6426,
+              "recall": 0.4637,
+              "f1": 0.5386,
+              "support": 977
+            },
+            {
+              "label": "Twisted Meaning",
+              "precision": 0.2529,
+              "recall": 0.4654,
+              "f1": 0.3277,
+              "support": 376
+            },
+            {
+              "label": "Very Twisted",
+              "precision": 0.0291,
+              "recall": 0.125,
+              "f1": 0.0472,
+              "support": 24
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              65,
+              46,
+              12
+            ],
+            [
+              0,
+              453,
+              460,
+              64
+            ],
+            [
+              0,
+              177,
+              175,
+              24
+            ],
+            [
+              0,
+              10,
+              11,
+              3
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.3933,
+          "precision_weighted": 0.4444,
+          "recall_weighted": 0.3933,
+          "f1_weighted": 0.3846,
+          "precision_macro": 0.238,
+          "recall_macro": 0.2467,
+          "f1_macro": 0.2194,
+          "labels": [
+            "Not Offensive",
+            "Slight",
+            "Very Offensive",
+            "Hateful Offensive"
+          ],
+          "per_class": [
+            {
+              "label": "Not Offensive",
+              "precision": 0.4083,
+              "recall": 0.6115,
+              "f1": 0.4897,
+              "support": 641
+            },
+            {
+              "label": "Slight",
+              "precision": 0.5013,
+              "recall": 0.2388,
+              "f1": 0.3235,
+              "support": 804
+            },
+            {
+              "label": "Very Offensive",
+              "precision": 0.0423,
+              "recall": 0.1364,
+              "f1": 0.0645,
+              "support": 44
+            },
+            {
+              "label": "Hateful Offensive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 11
+            }
+          ],
+          "confusion_matrix": [
+            [
+              392,
+              175,
+              65,
+              9
+            ],
+            [
+              535,
+              192,
+              71,
+              6
+            ],
+            [
+              25,
+              13,
+              6,
+              0
+            ],
+            [
+              8,
+              3,
+              0,
+              0
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Not Motivational",
+            "Motivational"
+          ],
+          "per_class": [
+            {
+              "label": "Not Motivational",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Motivational",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "summary": {
+        "task_a": {
+          "accuracy": 0.3287,
+          "precision_weighted": 0.3363,
+          "recall_weighted": 0.3287,
+          "f1_weighted": 0.3126,
+          "precision_macro": 0.3215,
+          "recall_macro": 0.3324,
+          "f1_macro": 0.3079
+        },
+        "task_b_avg": {
+          "accuracy": 0.8196,
+          "precision_weighted": 0.7854,
+          "recall_weighted": 0.8196,
+          "f1_weighted": 0.7964,
+          "precision_macro": 0.4713,
+          "recall_macro": 0.4938,
+          "f1_macro": 0.4768
+        },
+        "task_c_avg": {
+          "accuracy": 0.5997,
+          "precision_weighted": 0.5883,
+          "recall_weighted": 0.5997,
+          "f1_weighted": 0.5749,
+          "precision_macro": 0.2949,
+          "recall_macro": 0.315,
+          "f1_macro": 0.2906
+        }
+      }
+    },
+    "multimodal": {
+      "task_a": {
+        "accuracy": 0.3593,
+        "precision_weighted": 0.3591,
+        "recall_weighted": 0.3593,
+        "f1_weighted": 0.3474,
+        "precision_macro": 0.3487,
+        "recall_macro": 0.3443,
+        "f1_macro": 0.3361,
+        "labels": [
+          "Negative",
+          "Neutral",
+          "Positive"
+        ],
+        "per_class": [
+          {
+            "label": "Negative",
+            "precision": 0.3892,
+            "recall": 0.2483,
+            "f1": 0.3032,
+            "support": 580
+          },
+          {
+            "label": "Neutral",
+            "precision": 0.3735,
+            "recall": 0.5354,
+            "f1": 0.44,
+            "support": 579
+          },
+          {
+            "label": "Positive",
+            "precision": 0.2833,
+            "recall": 0.2493,
+            "f1": 0.2652,
+            "support": 341
+          }
+        ],
+        "confusion_matrix": [
+          [
+            144,
+            337,
+            99
+          ],
+          [
+            153,
+            310,
+            116
+          ],
+          [
+            73,
+            183,
+            85
+          ]
+        ]
+      },
+      "task_b": {
+        "humour": {
+          "accuracy": 0.934,
+          "precision_weighted": 0.8724,
+          "recall_weighted": 0.934,
+          "f1_weighted": 0.9021,
+          "precision_macro": 0.467,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4829,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Active",
+              "precision": 0.934,
+              "recall": 1.0,
+              "f1": 0.9659,
+              "support": 1401
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              99
+            ],
+            [
+              0,
+              1401
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.918,
+          "precision_weighted": 0.8427,
+          "recall_weighted": 0.918,
+          "f1_weighted": 0.8788,
+          "precision_macro": 0.459,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4786,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "Active",
+              "precision": 0.918,
+              "recall": 1.0,
+              "f1": 0.9572,
+              "support": 1377
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              123
+            ],
+            [
+              0,
+              1377
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.4913,
+          "precision_weighted": 0.5326,
+          "recall_weighted": 0.4913,
+          "f1_weighted": 0.4766,
+          "precision_macro": 0.5209,
+          "recall_macro": 0.5185,
+          "f1_macro": 0.4849,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.4405,
+              "recall": 0.7051,
+              "f1": 0.5423,
+              "support": 641
+            },
+            {
+              "label": "Active",
+              "precision": 0.6013,
+              "recall": 0.3318,
+              "f1": 0.4276,
+              "support": 859
+            }
+          ],
+          "confusion_matrix": [
+            [
+              452,
+              189
+            ],
+            [
+              574,
+              285
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Inactive",
+            "Active"
+          ],
+          "per_class": [
+            {
+              "label": "Inactive",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Active",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "task_c": {
+        "humour": {
+          "accuracy": 0.5953,
+          "precision_weighted": 0.4862,
+          "recall_weighted": 0.5953,
+          "f1_weighted": 0.5273,
+          "precision_macro": 0.2267,
+          "recall_macro": 0.2516,
+          "f1_macro": 0.2315,
+          "labels": [
+            "Not Funny",
+            "Funny",
+            "Very Funny",
+            "Hilarious"
+          ],
+          "per_class": [
+            {
+              "label": "Not Funny",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 99
+            },
+            {
+              "label": "Funny",
+              "precision": 0.6509,
+              "recall": 0.8623,
+              "f1": 0.7418,
+              "support": 973
+            },
+            {
+              "label": "Very Funny",
+              "precision": 0.2559,
+              "recall": 0.144,
+              "f1": 0.1843,
+              "support": 375
+            },
+            {
+              "label": "Hilarious",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 53
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              86,
+              13,
+              0
+            ],
+            [
+              0,
+              839,
+              134,
+              0
+            ],
+            [
+              0,
+              321,
+              54,
+              0
+            ],
+            [
+              0,
+              43,
+              10,
+              0
+            ]
+          ]
+        },
+        "sarcastic": {
+          "accuracy": 0.3233,
+          "precision_weighted": 0.4818,
+          "recall_weighted": 0.3233,
+          "f1_weighted": 0.3167,
+          "precision_macro": 0.2274,
+          "recall_macro": 0.2483,
+          "f1_macro": 0.1842,
+          "labels": [
+            "Not Sarcastic",
+            "General",
+            "Twisted Meaning",
+            "Very Twisted"
+          ],
+          "per_class": [
+            {
+              "label": "Not Sarcastic",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 123
+            },
+            {
+              "label": "General",
+              "precision": 0.6415,
+              "recall": 0.2344,
+              "f1": 0.3433,
+              "support": 977
+            },
+            {
+              "label": "Twisted Meaning",
+              "precision": 0.2545,
+              "recall": 0.6755,
+              "f1": 0.3697,
+              "support": 376
+            },
+            {
+              "label": "Very Twisted",
+              "precision": 0.0138,
+              "recall": 0.0833,
+              "f1": 0.0237,
+              "support": 24
+            }
+          ],
+          "confusion_matrix": [
+            [
+              0,
+              32,
+              79,
+              12
+            ],
+            [
+              0,
+              229,
+              649,
+              99
+            ],
+            [
+              0,
+              90,
+              254,
+              32
+            ],
+            [
+              0,
+              6,
+              16,
+              2
+            ]
+          ]
+        },
+        "offensive": {
+          "accuracy": 0.4327,
+          "precision_weighted": 0.4918,
+          "recall_weighted": 0.4327,
+          "f1_weighted": 0.4144,
+          "precision_macro": 0.2561,
+          "recall_macro": 0.2483,
+          "f1_macro": 0.227,
+          "labels": [
+            "Not Offensive",
+            "Slight",
+            "Very Offensive",
+            "Hateful Offensive"
+          ],
+          "per_class": [
+            {
+              "label": "Not Offensive",
+              "precision": 0.4405,
+              "recall": 0.7051,
+              "f1": 0.5423,
+              "support": 641
+            },
+            {
+              "label": "Slight",
+              "precision": 0.5652,
+              "recall": 0.2425,
+              "f1": 0.3394,
+              "support": 804
+            },
+            {
+              "label": "Very Offensive",
+              "precision": 0.0185,
+              "recall": 0.0455,
+              "f1": 0.0263,
+              "support": 44
+            },
+            {
+              "label": "Hateful Offensive",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 11
+            }
+          ],
+          "confusion_matrix": [
+            [
+              452,
+              138,
+              44,
+              7
+            ],
+            [
+              534,
+              195,
+              62,
+              13
+            ],
+            [
+              32,
+              9,
+              2,
+              1
+            ],
+            [
+              8,
+              3,
+              0,
+              0
+            ]
+          ]
+        },
+        "motivational": {
+          "accuracy": 0.9713,
+          "precision_weighted": 0.9435,
+          "recall_weighted": 0.9713,
+          "f1_weighted": 0.9572,
+          "precision_macro": 0.4857,
+          "recall_macro": 0.5,
+          "f1_macro": 0.4927,
+          "labels": [
+            "Not Motivational",
+            "Motivational"
+          ],
+          "per_class": [
+            {
+              "label": "Not Motivational",
+              "precision": 0.9713,
+              "recall": 1.0,
+              "f1": 0.9855,
+              "support": 1457
+            },
+            {
+              "label": "Motivational",
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 43
+            }
+          ],
+          "confusion_matrix": [
+            [
+              1457,
+              0
+            ],
+            [
+              43,
+              0
+            ]
+          ]
+        }
+      },
+      "summary": {
+        "task_a": {
+          "accuracy": 0.3593,
+          "precision_weighted": 0.3591,
+          "recall_weighted": 0.3593,
+          "f1_weighted": 0.3474,
+          "precision_macro": 0.3487,
+          "recall_macro": 0.3443,
+          "f1_macro": 0.3361
+        },
+        "task_b_avg": {
+          "accuracy": 0.8287,
+          "precision_weighted": 0.7978,
+          "recall_weighted": 0.8287,
+          "f1_weighted": 0.8037,
+          "precision_macro": 0.4832,
+          "recall_macro": 0.5046,
+          "f1_macro": 0.4848
+        },
+        "task_c_avg": {
+          "accuracy": 0.5807,
+          "precision_weighted": 0.6008,
+          "recall_weighted": 0.5807,
+          "f1_weighted": 0.5539,
+          "precision_macro": 0.299,
+          "recall_macro": 0.312,
+          "f1_macro": 0.2839
+        }
+      }
+    }
+  },
+  "weights_used": {
+    "text_only": {
+      "task_a": [
+        0.6,
+        0.25,
+        0.15
+      ],
+      "task_b": {
+        "humour": [
+          0.45,
+          0.45,
+          0.1
+        ],
+        "sarcastic": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "offensive": [
+          0.65,
+          0.15,
+          0.2
+        ],
+        "motivational": [
+          0.35,
+          0.5,
+          0.15
+        ]
+      },
+      "task_c": {
+        "humour": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "sarcastic": [
+          0.8,
+          0.1,
+          0.1
+        ],
+        "offensive": [
+          0.8,
+          0.1,
+          0.1
+        ],
+        "motivational": [
+          0.35,
+          0.5,
+          0.15
+        ]
+      }
+    },
+    "image_only": {
+      "task_a": [
+        0.65,
+        0.15,
+        0.2
+      ],
+      "task_b": {
+        "humour": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "sarcastic": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "offensive": [
+          0.7,
+          0.3,
+          0.0
+        ],
+        "motivational": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "task_c": {
+        "humour": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "sarcastic": [
+          0.65,
+          0.15,
+          0.2
+        ],
+        "offensive": [
+          0.35,
+          0.5,
+          0.15
+        ],
+        "motivational": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "training_curves": {
+    "epochs": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "image_only": {
+      "epochs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "train_loss": [
+        1.0976,
+        1.0916,
+        1.0858,
+        1.0799,
+        1.0763,
+        1.0711,
+        1.0635,
+        1.0611,
+        1.0584,
+        1.0551,
+        1.0497,
+        1.0496
+      ],
+      "val_loss": [
+        1.1028,
+        1.1012,
+        1.0996,
+        1.0991,
+        1.1005,
+        1.1019,
+        1.103,
+        1.0996,
+        1.1023,
+        1.1068,
+        1.1034,
+        1.1033
+      ],
+      "train_accuracy": [
+        0.3422,
+        0.371,
+        0.3732,
+        0.3802,
+        0.3902,
+        0.3971,
+        0.4151,
+        0.4197,
+        0.4157,
+        0.4329,
+        0.4359,
+        0.4392
+      ],
+      "val_accuracy": [
+        0.3114,
+        0.3243,
+        0.3457,
+        0.3343,
+        0.3543,
+        0.3443,
+        0.3371,
+        0.3371,
+        0.3386,
+        0.3514,
+        0.36,
+        0.3671
+      ]
+    },
+    "text_only": {
+      "epochs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "train_loss": [
+        1.0978,
+        1.0758,
+        0.912,
+        0.4627,
+        0.1492,
+        0.0817,
+        0.0562,
+        0.0459,
+        0.0383,
+        0.0323,
+        0.0271,
+        0.0273
+      ],
+      "val_loss": [
+        1.1013,
+        1.0797,
+        1.132,
+        1.4992,
+        1.9555,
+        2.2939,
+        2.4579,
+        2.5106,
+        2.4917,
+        2.4312,
+        2.5302,
+        2.474
+      ],
+      "train_accuracy": [
+        0.3473,
+        0.4152,
+        0.5908,
+        0.83,
+        0.953,
+        0.9795,
+        0.9857,
+        0.9883,
+        0.9897,
+        0.9914,
+        0.9916,
+        0.9921
+      ],
+      "val_accuracy": [
+        0.28,
+        0.3529,
+        0.4314,
+        0.4414,
+        0.4229,
+        0.4257,
+        0.4314,
+        0.4429,
+        0.4329,
+        0.4129,
+        0.4229,
+        0.4057
+      ]
+    },
+    "multimodal": {
+      "epochs": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "train_loss": [
+        1.0978,
+        1.0711,
+        0.9038,
+        0.4497,
+        0.1424,
+        0.0588,
+        0.0543,
+        0.0462,
+        0.0346,
+        0.0282,
+        0.0322,
+        0.0276
+      ],
+      "val_loss": [
+        1.1008,
+        1.069,
+        1.1384,
+        1.5562,
+        2.0066,
+        2.3008,
+        2.4277,
+        2.4212,
+        2.4134,
+        2.5744,
+        2.4346,
+        2.4633
+      ],
+      "train_accuracy": [
+        0.3448,
+        0.4221,
+        0.5995,
+        0.8317,
+        0.9575,
+        0.9844,
+        0.9883,
+        0.9902,
+        0.9924,
+        0.9921,
+        0.9925,
+        0.9932
+      ],
+      "val_accuracy": [
+        0.2886,
+        0.38,
+        0.4257,
+        0.4129,
+        0.4257,
+        0.4014,
+        0.3886,
+        0.3986,
+        0.4243,
+        0.41,
+        0.4071,
+        0.4086
+      ]
+    }
+  }
+}

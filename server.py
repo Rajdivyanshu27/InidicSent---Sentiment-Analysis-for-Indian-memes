@@ -19,6 +19,17 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 _PREDICTOR: Optional[MemotionPredictor] = None
 _SAMPLES_CACHE: dict[str, list] = {}
+_EVAL_REPORT_CACHE: Optional[dict] = None
+
+
+def load_evaluation_report() -> Optional[dict]:
+    global _EVAL_REPORT_CACHE
+    if _EVAL_REPORT_CACHE is None:
+        report_path = os.path.join(ARTIFACTS_DIR, "evaluation_report.json")
+        if os.path.isfile(report_path):
+            with open(report_path, "r", encoding="utf-8") as f:
+                _EVAL_REPORT_CACHE = json.load(f)
+    return _EVAL_REPORT_CACHE
 
 
 def get_predictor() -> MemotionPredictor:
@@ -82,6 +93,7 @@ def get_overview():
 
     return {
         "metrics": pred.metrics,
+        "evaluation": load_evaluation_report(),
         "schema": {
             "sentiment_labels": SENTIMENT_LABELS,
             "emotions": [{"key": k, "name": EMOTION_DISPLAY[k], "scale": TASK_C_SCALES[k]["labels"]} for k in EMOTION_KEYS],
@@ -91,6 +103,14 @@ def get_overview():
             "test": test_records[:6],
         },
     }
+
+
+@app.get("/api/evaluation")
+def get_evaluation():
+    report = load_evaluation_report()
+    if report is None:
+        raise HTTPException(status_code=503, detail="evaluation_report.json not found; run generate_evaluation.py first.")
+    return report
 
 
 @app.get("/api/samples")
@@ -157,15 +177,14 @@ async def run_ocr(image: UploadFile = File(...)):
             os.remove(tmp_path)
 
 
-@app.post("/api/analyze")
-async def analyze_meme(
-    image: Optional[UploadFile] = File(None),
-    ocr_text: str = Form(""),
-    split: Optional[str] = Form(None),
-    sample_id: Optional[int] = Form(None),
-    auto_ocr: bool = Form(True),
+async def _resolve_input_and_run(
+    image: Optional[UploadFile],
+    ocr_text: str,
+    split: Optional[str],
+    sample_id: Optional[int],
+    auto_ocr: bool,
+    runner,
 ):
-    predictor = get_predictor()
     tmp_path = None
     try:
         ground_truth = None
@@ -193,13 +212,37 @@ async def analyze_meme(
         else:
             raise HTTPException(status_code=400, detail="Provide an uploaded image or a dataset sample.")
 
-        result = predictor.predict(img_path, ocr_text)
+        result = runner(img_path, ocr_text)
         if ground_truth is not None:
             result["ground_truth"] = ground_truth
         return result
     finally:
         if tmp_path and os.path.isfile(tmp_path):
             os.remove(tmp_path)
+
+
+@app.post("/api/analyze")
+async def analyze_meme(
+    image: Optional[UploadFile] = File(None),
+    ocr_text: str = Form(""),
+    split: Optional[str] = Form(None),
+    sample_id: Optional[int] = Form(None),
+    auto_ocr: bool = Form(True),
+):
+    predictor = get_predictor()
+    return await _resolve_input_and_run(image, ocr_text, split, sample_id, auto_ocr, predictor.predict)
+
+
+@app.post("/api/explain")
+async def explain_meme(
+    image: Optional[UploadFile] = File(None),
+    ocr_text: str = Form(""),
+    split: Optional[str] = Form(None),
+    sample_id: Optional[int] = Form(None),
+    auto_ocr: bool = Form(True),
+):
+    predictor = get_predictor()
+    return await _resolve_input_and_run(image, ocr_text, split, sample_id, auto_ocr, predictor.explain)
 
 
 if __name__ == "__main__":

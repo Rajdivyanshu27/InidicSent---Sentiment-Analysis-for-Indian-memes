@@ -1,8 +1,8 @@
 {
   "task_a": {
-    "weighted_f1": 0.3187,
-    "macro_f1": 0.3082,
-    "accuracy": 0.354
+    "weighted_f1": 0.3474,
+    "macro_f1": 0.3361,
+    "accuracy": 0.3593
   },
   "task_b": {
     "humour": {
@@ -49,7 +49,7 @@
     }
   },
   "summary": {
-    "task_a_weighted_f1": 0.3187,
+    "task_a_weighted_f1": 0.3474,
     "task_b_avg_weighted_f1": 0.8037,
     "task_c_avg_weighted_f1": 0.5539,
     "train_count": 7000,
